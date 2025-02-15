@@ -1,0 +1,5 @@
+startRedis:
+	docker exec -it redis-stack-server redis-cli
+
+stopRedis:
+	docker stop redis-stack-server
