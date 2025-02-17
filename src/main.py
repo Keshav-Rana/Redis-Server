@@ -1,15 +1,9 @@
-from src.services.resp import resp
+from services.RESPService import RESPService
 from src.services.redisServer import redisServer
 
 def main():
-    # take user input
     input_val = input()
-    # serialise it using our RESP protocol
-    input_val = resp.serialiser(input_val)
-    # send it to the server
-    # receive a response
+    input_val = RESPService.serialiser(input_val)
     response = redisServer.processInput(input_val)
-    # deserialise the response
-    response = resp.deserialiser(response)
-    # print the response
+    response = RESPService.deserialiser(response)
     print(response)
