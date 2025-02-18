@@ -1,4 +1,5 @@
 import socket
+from services.CommandService import CommandService
 
 HOST = "localhost"
 PORT = 6379
@@ -13,21 +14,31 @@ server_socket.listen()
 
 print(f"Server is listening on {HOST}:{PORT}")
 
-while True:
-    # accept connection
-    client_socket, client_addr = server_socket.accept()
-    print(f"Connection from {client_addr} has been established.")
+try:
+    while True:
+        # accept connection
+        client_socket, client_addr = server_socket.accept()
+        print(f"Connection from {client_addr} has been established.")
 
-    # receive data from client
-    data = client_socket.recv(1024)
+        # receive data from client
+        data = client_socket.recv(1024)
 
-    if not data:
-        break
+        if not data:
+            break
 
-    print("Received data: {data.decode('utf-8')}")
+        decoded_data = data.decode('utf-8')
+        splitted_data = decoded_data.split('\r\n')
 
-    # send response to client using client socket
-    client_socket.sendall("Hello, client!".encode('utf-8'))
+        print(f"Received data from client: {splitted_data}")
 
-    # close the connection
-    client_socket.close()
+        cmdService = CommandService(splitted_data)
+        response = cmdService.makeResponse()
+
+        # send response to client using client socket
+        client_socket.sendall(response.encode('utf-8'))
+
+except KeyboardInterrupt:
+    print("Shutting down the server...")
+
+finally:
+    server_socket.close()
