@@ -29,5 +29,14 @@ class CommandService:
                     
             return response
         
+        elif self.operation == "SET":
+            pass
+
+        elif self.operation == "GET":
+            pass
+
+        elif self.operation == "EXPIRE":
+            pass
+        
         else:
             return "+Error\r\n"
