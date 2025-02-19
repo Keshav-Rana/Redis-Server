@@ -1,3 +1,5 @@
+import re
+
 class RESPService:
     @staticmethod
     def serialiser(input_cmd):
@@ -14,4 +16,9 @@ class RESPService:
     
     @staticmethod
     def deserialiser(redis_response):
-        pass
+        # remove unwanted characters
+        redis_response = redis_response.replace("+", "")
+        redis_response = redis_response.replace("\r\n", "")
+        redis_response = re.sub(r'\$\d+', '', redis_response)
+
+        return redis_response

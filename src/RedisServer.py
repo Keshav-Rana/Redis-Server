@@ -1,5 +1,7 @@
 import socket
 from services.CommandService import CommandService
+from services.RESPService import RESPService
+from services.Redis import Redis
 
 HOST = "localhost"
 PORT = 6379
@@ -33,6 +35,9 @@ try:
 
         cmdService = CommandService(splitted_data)
         response = cmdService.makeResponse()
+
+        # deserialise response using RESP
+        response = RESPService.deserialiser(response)
 
         # send response to client using client socket
         client_socket.sendall(response.encode('utf-8'))
