@@ -36,6 +36,8 @@ try:
         cmdService = CommandService(splitted_data)
         response = cmdService.makeResponse()
 
+        print(f"Response from command service: {response}")
+
         # deserialise response using RESP
         response = RESPService.deserialiser(response)
 
