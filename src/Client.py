@@ -14,11 +14,12 @@ print("Connected to Redis Server")
 
 # send message to server
 message = RESPService.serialiser('ECHO "Hello World"')
+# test_message = "Hello ji"
 client_socket.sendall(message.encode())
 
 # receive a response from the server
 response = client_socket.recv(1024)
-print(f"Received from server: {response.decode()}")
+print(f"{response.decode()}")
 
 client_socket.close()
 

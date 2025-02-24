@@ -3,22 +3,28 @@ import re
 class RESPService:
     @staticmethod
     def serialiser(input_cmd):
-        # split the input command by spaces and get the operation
-        message_list = input_cmd.split()
-        message_size = len(message_list)
+        # find double quotes, single quotes and sequence on non whitespace chars
+        pattern = r'\".*?\"|\'.*?\'|\S+'
+        matches = re.findall(pattern, input_cmd)
+        elements = [match.strip('"').strip("'") for match in matches]
 
-        final_message = f"*{message_size}"
+        message = f"*{len(elements)}\r\n"
 
-        for message in message_list:
-            final_message += f"\r\n${len(message)}\r\n{message}"
+        # create RESP message
+        for element in elements:
+            message += f"${len(element)}\r\n"
+            message += f"{element}\r\n"
 
-        return final_message
+        return message
     
     @staticmethod
-    def deserialiser(redis_response):
-        # remove unwanted characters
-        redis_response = redis_response.replace("+", "")
-        redis_response = redis_response.replace("\r\n", "")
-        redis_response = re.sub(r'\$\d+', '', redis_response)
+    def deserialiser(cmd, redis_response):
+        if (cmd == "ECHO"):
+            lines = redis_response.split('\r\n')
 
-        return redis_response
+            # check if it's bulk string
+            if lines[0].startswith("$"):
+                length = int(lines[0][1:])
+                content = lines[1]
+                if length == len(content):
+                    return content

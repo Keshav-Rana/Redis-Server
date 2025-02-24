@@ -31,15 +31,11 @@ try:
         decoded_data = data.decode('utf-8')
         splitted_data = decoded_data.split('\r\n')
 
-        print(f"Received data from client: {splitted_data}")
-
         cmdService = CommandService(splitted_data)
         response = cmdService.makeResponse()
 
-        print(f"Response from command service: {response}")
-
         # deserialise response using RESP
-        response = RESPService.deserialiser(response)
+        response = RESPService.deserialiser(splitted_data[2], response)
 
         # send response to client using client socket
         client_socket.sendall(response.encode('utf-8'))

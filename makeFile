@@ -8,9 +8,9 @@ install_tcpdump:
 	sudo apt-get install tcpdump
 
 install_tcpdump_in_container:
-	docker exec -it <redis-container> bash
-apt-get update && apt-get install tcpdump -y
-tcpdump -A -i any port 6379
+	docker exec -it redis-stack-server bash
+	apt-get update && apt-get install tcpdump -y
+	tcpdump -A -i any port 6379
 
 start_tcpdump:
 	tcpdump -A -i any port 6379

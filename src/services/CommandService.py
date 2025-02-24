@@ -10,24 +10,11 @@ class CommandService:
             return "+PONG\r\n"
         
         elif self.operation == "ECHO":
-            response = ""
-            sum = 0
-            # start from 2nd element to fetch echo strings size
-            if (len(self.message) >= 4):
-                for i in range(3, len(self.message), 2):
-                    # pattern $ followed by some digits
-                    match = re.search(r'\$(\d+)', self.message[i])
-                    if match:
-                        sum += int(match.group(1)) # capture the digits from the string
-
-            response += "$" + str(sum) + "\r\n"
-
-            # start from 3rd element onwards to fetch the echo strings
-            if (len(self.message) >= 5):
-                for i in range(4, len(self.message), 2):
-                    response += self.message[i] + " "
-                    
-            return response
+            # validate arguments
+            if (len(self.message) > 6):
+                raise Exception("Invalid arguments. There can be only 1 argument")
+            
+            return self.message[3] + "\r\n" +  self.message[4] + "\r\n"
         
         elif self.operation == "SET":
             pass
