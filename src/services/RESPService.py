@@ -28,3 +28,13 @@ class RESPService:
                 content = lines[1]
                 if length == len(content):
                     return content
+                
+        elif (cmd == "SET"):
+            response = redis_response.split('\r\n')
+            # remove + from +Ok
+            response = response[0].replace("+", "")
+            return response
+        
+        elif (cmd == "GET"):
+            response = redis_response.split('\r\n')
+            return f'"{response[1]}"'

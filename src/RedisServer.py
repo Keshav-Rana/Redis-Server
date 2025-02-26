@@ -6,6 +6,9 @@ from services.Redis import Redis
 HOST = "localhost"
 PORT = 6379
 
+# create redis db
+db = Redis()
+
 # create server socket using TCP
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -30,15 +33,18 @@ try:
 
         decoded_data = data.decode('utf-8')
         splitted_data = decoded_data.split('\r\n')
+        print("Splitted data:")
+        print(splitted_data)
 
-        cmdService = CommandService(splitted_data)
+        cmdService = CommandService(splitted_data, db)
         response = cmdService.makeResponse()
 
-        # deserialise response using RESP
-        response = RESPService.deserialiser(splitted_data[2], response)
+        if (response is not None and response != ""):
+            # deserialise response using RESP
+            response = RESPService.deserialiser(splitted_data[2], response)
 
-        # send response to client using client socket
-        client_socket.sendall(response.encode('utf-8'))
+            # send response to client using client socket
+            client_socket.sendall(response.encode('utf-8'))
 
 except KeyboardInterrupt:
     print("Shutting down the server...")
