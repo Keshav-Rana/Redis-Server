@@ -22,12 +22,17 @@ class RESPService:
         if (cmd == "ECHO"):
             lines = redis_response.split('\r\n')
 
+            # handle error
+            if lines[0].startswith("-"):
+                content = lines[0].replace("-", "")
+                return f"(error) {content}"
+
             # check if it's bulk string
             if lines[0].startswith("$"):
                 length = int(lines[0][1:])
                 content = lines[1]
                 if length == len(content):
-                    return content
+                    return f"\"{content}\""
                 
         elif (cmd == "SET"):
             response = redis_response.split('\r\n')

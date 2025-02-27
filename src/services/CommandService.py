@@ -13,7 +13,7 @@ class CommandService:
         elif self.operation == "ECHO":
             # validate arguments
             if (len(self.message) > 6):
-                raise Exception("Invalid arguments. There can be only 1 argument")
+                return "-ERR wrong number of arguments for 'echo' command\r\n"
             
             return self.message[3] + "\r\n" +  self.message[4] + "\r\n"
         
