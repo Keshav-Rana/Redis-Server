@@ -1,8 +1,8 @@
 import unittest
 from services.RESPService import RESPService
-from services.RESPService import RESPService
 from services.CommandService import CommandService
 from services.Redis import Redis
+
 class ECHO_tests(unittest.TestCase):
     def setUp(self):
         self.resp_service = RESPService()

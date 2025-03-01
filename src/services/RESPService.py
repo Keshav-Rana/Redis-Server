@@ -36,10 +36,26 @@ class RESPService:
                 
         elif (cmd == "SET"):
             response = redis_response.split('\r\n')
+
+            # handle error
+            if response[0].startswith("-"):
+                content = response[0].replace("-", "")
+                return f"(error) {content}"
+
             # remove + from +Ok
             response = response[0].replace("+", "")
             return response
         
         elif (cmd == "GET"):
             response = redis_response.split('\r\n')
+
+            # handle error
+            if response[0].startswith("-"):
+                content = response[0].replace("-", "")
+                return f"(error) {content}"
+            
+            # handle case where key does not exist
+            if response[0].startswith("$-1"):
+                return f"(nil)\r\n"
+
             return f'"{response[1]}"'

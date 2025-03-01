@@ -8,7 +8,10 @@ class Redis:
         self.data[key] = value
 
     def get(self, key):
-        return self.data[key]
+        try:
+            return self.data[key]
+        except KeyError:
+            return None
     
     def delete(self, key):
         if key in self.data:

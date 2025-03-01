@@ -20,7 +20,7 @@ class CommandService:
         elif self.operation == "SET":
             # validate arguments
             if (len(self.message) != 8):
-                raise Exception("Invalid arguments. There should be 2 arguments")
+                return "-ERR wrong number of arguments for 'set' command\r\n"
             
             # insert key val in redis db
             self.db.set(self.message[4], self.message[6])
@@ -30,12 +30,17 @@ class CommandService:
 
         elif self.operation == "GET":
             # validate arguments
-            if (len(self.message) > 6):
-                raise Exception("Invalid arguments. There can be only 1 argument")
+            if (len(self.message) != 6):
+                return "-ERR wrong number of arguments for 'get' command\r\n"
+            
+            val = self.db.get(self.message[4])
+
+            # handle case where key does not exist
+            if val == None:
+                return "$-1\r\n"
             
             # get the length of value of key
             valLen = len(self.db.get(self.message[4]))
-            val = self.db.get(self.message[4])
 
             return f"${valLen}\r\n{val}\r\n"
 
