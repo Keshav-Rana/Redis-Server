@@ -12,6 +12,9 @@ db = Redis()
 # create server socket using TCP
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+# allow port reuse
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 # bind the socket
 server_socket.bind((HOST, PORT))
 
@@ -25,27 +28,35 @@ try:
         client_socket, client_addr = server_socket.accept()
         print(f"Connection from {client_addr} has been established.")
 
-        # receive data from client
-        data = client_socket.recv(1024)
+        # receive multiple requests from the same client
+        while True:
+            try:
+                # receive data from client
+                data = client_socket.recv(1024)
 
-        if not data:
-            break
+                if not data:
+                    break
 
-        decoded_data = data.decode('utf-8')
-        splitted_data = decoded_data.split('\r\n')
-        print("Splitted data:")
-        print(splitted_data)
+                decoded_data = data.decode('utf-8')
+                splitted_data = decoded_data.split('\r\n')
+                print("Splitted data:")
+                print(splitted_data)
 
-        cmdService = CommandService(splitted_data, db)
-        response = cmdService.makeResponse()
+                cmdService = CommandService(splitted_data, db)
+                response = cmdService.makeResponse()
 
-        if (response is not None and response != ""):
-            # deserialise response using RESP
-            response = RESPService.deserialiser(splitted_data[2], response)
+                if (response is not None and response != ""):
+                    # deserialise response using RESP
+                    # response = RESPService.deserialiser(splitted_data[2], response)
+                    # send response to client using client socket
+                    client_socket.sendall(response.encode('utf-8'))
+            except ConnectionError:
+                break
+            except Exception as e:
+                print(f"Error handling request: {e}")
+                break
 
-            # send response to client using client socket
-            client_socket.sendall(response.encode('utf-8'))
-
+        client_socket.close()
 except KeyboardInterrupt:
     print("Shutting down the server...")
 
