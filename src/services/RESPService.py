@@ -59,20 +59,3 @@ class RESPService:
                 return f"(nil)\r\n"
 
             return f'"{response[1]}"'
-        
-        elif (cmd == "CONFIG"):
-            response = redis_response.split('\r\n')
-            
-            # handle error
-            if response[0].startswith("-"):
-                content = response[0].replace("-", "")
-                return f"(error) {content}"
-                
-            # handle array response for CONFIG GET
-            if response[0].startswith("*"):
-                # Format: key value pair
-                key = response[2]
-                value = response[4]
-                return f"{key} {value}"
-                
-            return redis_response

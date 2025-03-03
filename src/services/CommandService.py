@@ -42,19 +42,7 @@ class CommandService:
             # get the length of value of key
             valLen = len(self.db.get(self.message[4]))
 
-            return f"${valLen}\r\n{val}\r\n"
-        
-        elif self.operation == "CONFIG":
-            # Handle CONFIG GET command
-            if len(self.message) >= 6 and self.message[4].upper() == "GET":
-                # Return mock configuration values
-                if self.message[5].lower() == "save":
-                    return "*2\r\n$4\r\nsave\r\n$3\r\n600\r\n"
-                elif self.message[5].lower() == "appendonly":
-                    return "*2\r\n$10\r\nappendonly\r\n$2\r\nno\r\n"
-            
-            return "-ERR unsupported CONFIG subcommand or wrong number of arguments\r\n"
-        
+            return f"${valLen}\r\n{val}\r\n"    
 
         elif self.operation == "EXPIRE":
             pass
