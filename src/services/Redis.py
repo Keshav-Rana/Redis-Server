@@ -1,11 +1,18 @@
-# storage for redis
+import threading
 
+# storage for redis
 class Redis:
     def __init__(self):
         self.data = {}
 
-    def set(self, key, value):
+    def set(self, key, value, ex=None):
         self.data[key] = value
+
+        # EX implementation
+        if ex is not None:
+            # remove the key value after ex seconds
+            timer = threading.Timer(int(ex), self.delete, args=(key,))
+            timer.start()
 
     def get(self, key):
         try:

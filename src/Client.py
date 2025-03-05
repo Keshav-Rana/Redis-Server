@@ -3,7 +3,7 @@ from services.RESPService import RESPService
 import socket
 
 HOST = "localhost"
-PORT = 6379
+PORT = 6380
 
 # create client socket for sending data
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,7 +13,7 @@ client_socket.connect((HOST, PORT))
 print("Connected to Redis Server")
 
 # send message to server
-message = RESPService.serialiser('ECHO ""')
+message = RESPService.serialiser('SET testKey val EX ab')
 print(message)
 # test_message = "Hello ji"
 client_socket.sendall(message.encode())

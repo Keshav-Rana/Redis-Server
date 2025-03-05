@@ -19,8 +19,21 @@ class CommandService:
         
         elif self.operation == "SET":
             # validate arguments
-            if (len(self.message) != 8):
+            if (len(self.message) < 8):
                 return "-ERR wrong number of arguments for 'set' command\r\n"
+            
+            # check option EX
+            if (len(self.message) > 8 and self.message[8] == "EX"):
+                # check if the value is an integer
+                try:
+                    timeInSeconds = int(self.message[10])
+                    if (timeInSeconds <= 0):
+                        return "-ERR invalid expire time in 'set' command\r\n"
+                    
+                    # insert key val in redis db and remove after timeInSeconds
+                    self.db.set(self.message[4], self.message[6], self.message[10])
+                except ValueError:
+                    return "-ERR value is not an integer or out of range\r\n"
             
             # insert key val in redis db
             self.db.set(self.message[4], self.message[6])

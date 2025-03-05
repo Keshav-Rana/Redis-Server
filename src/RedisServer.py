@@ -4,7 +4,7 @@ from services.RESPService import RESPService
 from services.Redis import Redis
 
 HOST = "localhost"
-PORT = 6379
+PORT = 6380
 
 # create redis db
 db = Redis()

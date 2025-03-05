@@ -6,3 +6,6 @@ startRedis:
 
 stopRedisContainer:
 	docker stop redis-stack-server
+
+benchmarkGETSET:
+	redis-benchmark -t SET,GET -q
