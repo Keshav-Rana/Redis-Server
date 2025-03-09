@@ -2,6 +2,7 @@ import unittest
 from services.Redis import Redis
 from services.CommandService import CommandService
 from services.RESPService import RESPService
+import time     
 
 class EX_tests(unittest.TestCase):
     def setUp(self):
@@ -22,6 +23,13 @@ class EX_tests(unittest.TestCase):
 
         response_displayed_to_user = "OK"
         self.assertEqual(self.resp_service.deserialiser(splitted_data[2], response), response_displayed_to_user)
+
+        # check if the key exists
+        self.assertEqual(self.redis_db.get("ten"), "10")
+
+        # wait 11 seconds and check if the key has expired
+        time.sleep(11)
+        self.assertEqual(self.redis_db.get("ten"), None)
 
     def test_zeroSeconds(self): 
         input_cmd = "SET zero 0 EX 0"

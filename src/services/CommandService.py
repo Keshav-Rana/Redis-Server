@@ -23,17 +23,34 @@ class CommandService:
                 return "-ERR wrong number of arguments for 'set' command\r\n"
             
             # check option EX
-            if (len(self.message) > 8 and self.message[8] == "EX"):
-                # check if the value is an integer
-                try:
-                    timeInSeconds = int(self.message[10])
-                    if (timeInSeconds <= 0):
-                        return "-ERR invalid expire time in 'set' command\r\n"
-                    
-                    # insert key val in redis db and remove after timeInSeconds
-                    self.db.set(self.message[4], self.message[6], self.message[10])
-                except ValueError:
-                    return "-ERR value is not an integer or out of range\r\n"
+            if (len(self.message) > 8):
+                if (self.message[8] == "EX"):
+                    # check if the value is an integer
+                    try:
+                        timeInSeconds = int(self.message[10])
+                        if (timeInSeconds <= 0):
+                            return "-ERR invalid expire time in 'set' command\r\n"
+                        
+                        # insert key val in redis db and remove after timeInSeconds
+                        self.db.set(self.message[4], self.message[6], self.message[8], self.message[10])
+                    except ValueError:
+                        return "-ERR value is not an integer or out of range\r\n"
+                elif (self.message[8] == "PX"):
+                    try:
+                        timeInMilliseconds = int(self.message[10])
+                        if (timeInMilliseconds <= 0):
+                            return "-ERR invalid expire time in 'set' command\r\n"
+                        
+                        # insert key val in redis db and remove after timeInMilliseconds
+                        self.db.set(self.message[4], self.message[6], self.message[8], self.message[10])
+                    except ValueError:
+                        return "-ERR value is not an integer or out of range\r\n"
+                # unix time in seconds
+                elif (self.message[8] == "EAXT"):
+                    pass
+                # unix time in milliseconds
+                elif self.message[8] == "PXAT":
+                    pass
             
             # insert key val in redis db
             self.db.set(self.message[4], self.message[6])
