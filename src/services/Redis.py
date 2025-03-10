@@ -8,21 +8,16 @@ class Redis:
     def set(self, key, value, option=None, time=None):
         self.data[key] = value
 
-        # EX implementation
+        # EX, PX, EAXT, PXAT options implementation
         if time is not None and option is not None:
-            if (option == "EX"):
+            if option == "EX" or option == "EAXT":
                 timer = threading.Timer(int(time), self.delete, args=(key,))
                 timer.start()
-            elif option == "PX":
+            elif option == "PX" or option == "PXAT":
                 timeInMilliseconds = int(time) / 1000
-                print(timeInMilliseconds)
                 timer = threading.Timer(timeInMilliseconds, self.delete, args=(key,))
                 timer.start()
-            elif option == "EAXT":
-                pass
-            elif option == "PXAT":
-                pass
-
+            
     def get(self, key):
         try:
             return self.data[key]

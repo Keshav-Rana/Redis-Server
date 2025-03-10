@@ -13,7 +13,7 @@ client_socket.connect((HOST, PORT))
 print("Connected to Redis Server")
 
 # send message to server
-message = RESPService.serialiser('GET test')
+message = RESPService.serialiser('SET test val')
 print(message)
 # test_message = "Hello ji"
 client_socket.sendall(message.encode())

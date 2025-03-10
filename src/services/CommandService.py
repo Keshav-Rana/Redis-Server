@@ -1,5 +1,7 @@
 import re
 from services.Redis import Redis
+from datetime import datetime, timezone
+
 class CommandService:
     def __init__(self, message, db):
         self.operation = message[2]
@@ -47,10 +49,40 @@ class CommandService:
                         return "-ERR value is not an integer or out of range\r\n"
                 # unix time in seconds
                 elif (self.message[8] == "EAXT"):
-                    pass
+                    try:
+                        unixTimeInSeconds = float(self.message[10])
+                        # convert unix time to datetime obj
+                        userDt = datetime.fromtimestamp(unixTimeInSeconds, tz=timezone.utc)
+                        currDt = datetime.now(timezone.utc)
+
+                        # calculate total seconds
+                        totalSeconds = (userDt - currDt).total_seconds()
+
+                        if (totalSeconds <= 0):
+                            return "-ERR invalid expire time in 'set' command\r\n"
+
+                        # insert key val in redis db and remove after time
+                        self.db.set(self.message[4], self.message[6], self.message[8], totalSeconds)
+                    except ValueError:
+                        return "-ERR value is not an integer or out of range\r\n"
                 # unix time in milliseconds
                 elif self.message[8] == "PXAT":
-                    pass
+                    try:
+                        unixTimeInMilliseconds = float(self.message[10])
+                        # convert unix time to datetime obj
+                        userDt = datetime.fromtimestamp(unixTimeInMilliseconds, tz=timezone.utc)
+                        currDt = datetime.now(timezone.utc)
+                        
+                        # calculate total seconds and convert to milliseconds
+                        totalMilliseconds = ((userDt - currDt).total_seconds()) * 1000
+
+                        if (totalMilliseconds <= 0):
+                            return "-ERR invalid expire time in 'set' command\r\n"
+
+                        # insert into redis db
+                        self.db.set(self.message[4], self.message[6], self.message[8], totalMilliseconds)
+                    except ValueError:
+                        return "-ERR value is not an integer or out of range\r\n"
             
             # insert key val in redis db
             self.db.set(self.message[4], self.message[6])
