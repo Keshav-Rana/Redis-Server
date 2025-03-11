@@ -59,3 +59,16 @@ class RESPService:
                 return f"(nil)\r\n"
 
             return f'"{response[1]}"'
+        
+        elif (cmd == "EXISTS" or cmd == "DEL"):
+            response = redis_response.split('\r\n')
+
+            # handle error
+            if response[0].startswith("-"):
+                content = response[0].replace("-", "")
+                return f"(error) {content}"
+            
+            # strip : from the content
+            response[0] = response[0].replace(":", "")
+            
+            return f'(integer) {response[0]}'

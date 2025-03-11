@@ -47,7 +47,7 @@ try:
 
                 if (response is not None and response != ""):
                     # deserialise response using RESP
-                    # response = RESPService.deserialiser(splitted_data[2], response)
+                    response = RESPService.deserialiser(splitted_data[2], response)
                     # send response to client using client socket
                     client_socket.sendall(response.encode('utf-8'))
             except ConnectionError:

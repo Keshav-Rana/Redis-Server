@@ -105,6 +105,51 @@ class CommandService:
             valLen = len(self.db.get(self.message[4]))
 
             return f"${valLen}\r\n{val}\r\n"    
+        
+        elif self.operation == "EXISTS":
+            # validate arguments
+            if (len(self.message) <= 4):
+                return "-ERR wrong number of arguments for 'exists' command\r\n"
+            
+            numOfKeys = 0
+            
+            # retrieve keys and check if each of them exists in db
+            for i in range(4, len(self.message), 2):
+                if self.db.get(self.message[i]) != None:
+                    numOfKeys += 1
+
+            return f":{numOfKeys}\r\n"
+        
+        elif self.operation == "DEL":
+            # validate arguments
+            if (len(self.message) <= 4):
+                return "-ERR wrong number of arguments for 'exists' command\r\n"
+            
+            numOfKeys = 0
+            
+            # retrieve keys and check if each of them exists in db
+            for i in range(4, len(self.message), 2):
+                if self.db.get(self.message[i]) != None:
+                    numOfKeys += 1
+                    # delete key val
+                    self.db.delete(self.message[i])
+
+            return f":{numOfKeys}\r\n"
+
+        elif self.operation == "INCR":
+            pass
+
+        elif self.operation == "DECR":
+            pass
+        
+        elif self.operation == "LPUSH":
+            pass
+
+        elif self.operation == "RPUSH":
+            pass
+
+        elif self.operation == "SAVE":
+            pass
 
         elif self.operation == "EXPIRE":
             pass
