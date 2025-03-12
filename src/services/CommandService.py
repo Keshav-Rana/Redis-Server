@@ -137,10 +137,44 @@ class CommandService:
             return f":{numOfKeys}\r\n"
 
         elif self.operation == "INCR":
-            pass
+            # validate arguments
+            if (len(self.message) <= 4 or len(self.message) > 6):
+                return "-ERR wrong number of arguments for 'incr' command\r\n"
+            
+            # validate that the corresponding value of the key is convertible to integer
+            try:
+                key = self.message[4]
+                val = int(self.db.get(key))
+                # increment value
+                val += 1
+                self.db.set(key, str(val))
+                return f":{str(val)}\r\n"
+            except ValueError:
+                return "-ERR value is not an integer or out of range\r\n"
+            except TypeError:
+                # case - key does not exist, straightway initialise it to 1 instead of first setting to 0 then incrementing
+                self.db.set(self.message[4], "1")
+                return ":1\r\n"
 
         elif self.operation == "DECR":
-            pass
+            # validate arguments
+            if (len(self.message) <= 4 or len(self.message) > 6):
+                return "-ERR wrong number of arguments for 'decr' command\r\n"
+            
+            # validate that the corresponding value of the key is convertible to integer
+            try:
+                key = self.message[4]
+                val = int(self.db.get(key))
+                # increment value
+                val -= 1
+                self.db.set(key, str(val))
+                return f":{str(val)}\r\n"
+            except ValueError:
+                return "-ERR value is not an integer or out of range\r\n"
+            except TypeError:
+                # case - key does not exist, straightway initialise it to -1 instead of first setting to 0 then decrementing
+                self.db.set(self.message[4], "-1")
+                return ":-1\r\n"
         
         elif self.operation == "LPUSH":
             pass

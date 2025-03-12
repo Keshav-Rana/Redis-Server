@@ -12,25 +12,26 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((HOST, PORT))
 print("Connected to Redis Server")
 
-# send message to server
-message = RESPService.serialiser('DEL test')
-print(message)
-# test_message = "Hello ji"
-client_socket.sendall(message.encode())
+try:
+    while True:
+        # get input from user
+        message = input()
 
-# receive a response from the server
-response = client_socket.recv(1024)
-print(f"{response.decode()}")
+        # send message to server
+        message = RESPService.serialiser(message)
+        # print(message)
 
-client_socket.close()
+        client_socket.sendall(message.encode())
 
-# def main():
-#     # establish connection
+        # receive a response from the server
+        response = client_socket.recv(1024)
+        print(f"{response.decode()}")
 
-#     # all the processing
-#     input_val = input()
-#     input_val = RESPService.inputSerialiser(input_val)
-#     response = RedisServer.processInput(input_val)
-#     response = RESPService.outputDeserialiser(response)
-#     print(response)
-# 
+except KeyboardInterrupt:
+    print("Shutting down the server...")
+
+except ConnectionError as e:
+    print(f"Connection Error: {e}")
+
+finally:
+    client_socket.close()

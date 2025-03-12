@@ -56,7 +56,7 @@ class RESPService:
             
             # handle case where key does not exist
             if response[0].startswith("$-1"):
-                return f"(nil)\r\n"
+                return f"(nil)"
 
             return f'"{response[1]}"'
         
@@ -71,4 +71,16 @@ class RESPService:
             # strip : from the content
             response[0] = response[0].replace(":", "")
             
+            return f'(integer) {response[0]}'
+        
+        elif cmd == "INCR" or cmd == "DECR":
+            response = redis_response.split('\r\n')
+
+            # handle error
+            if response[0].startswith("-"):
+                content = response[0].replace("-", "")
+                return f"(error) {content}"
+            
+            # strip : from the response
+            response[0] = response[0].replace(":", "")
             return f'(integer) {response[0]}'
