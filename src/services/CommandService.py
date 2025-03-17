@@ -177,15 +177,63 @@ class CommandService:
                 return ":-1\r\n"
         
         elif self.operation == "LPUSH":
-            pass
+            # validate arguments
+            if not len(self.message) >= 7:
+                return "-ERR wrong number of arguments for 'lpush' command\r\n"
+            
+            key = self.message[4]
+            
+            curr_list = self.db.get(key)
+            if curr_list is None:
+                curr_list = []
+                self.db.set(key, curr_list)
 
+            # validate it's a list
+            if not isinstance(curr_list, list):
+                return "-ERR WRONGTYPE Operation against a key holding the wrong kind of value\r\n"
+            
+            # insert at head
+            # for i in range(len(self.message)-2, 5, -2):
+            #     curr_list.insert(0, self.message[i])
+
+            for i in range(6, len(self.message), 2):
+                curr_list.insert(0, self.message[i])
+
+            # set the new list in db
+            self.db.set(key, curr_list)
+
+            return f":{len(curr_list)}\r\n"
+            
         elif self.operation == "RPUSH":
+            # validate arguments
+            if not len(self.message) >= 7:
+                return "-ERR wrong number of arguments for 'rpush' command\r\n"
+            
+            key = self.message[4]
+            
+            curr_list = self.db.get(key)
+            if curr_list is None:
+                curr_list = []
+                self.db.set(key, curr_list)
+
+            # validate it's a list
+            if not isinstance(curr_list, list):
+                return "-ERR WRONGTYPE Operation against a key holding the wrong kind of value\r\n"
+            
+            # insert at tail
+            for i in range(6, len(self.message), 2):
+                curr_list.append(self.message[i])
+
+            # set the new list in db
+            self.db.set(key, curr_list)
+
+            return f":{len(curr_list)}\r\n"
+        
+        # only supports positive indexes
+        elif self.operation == "LRANGE":
             pass
 
         elif self.operation == "SAVE":
-            pass
-
-        elif self.operation == "EXPIRE":
             pass
         
         else:
