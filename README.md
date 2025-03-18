@@ -7,3 +7,5 @@
 
 **Persistence mechanism:**
 Append only file
+
+For further details, refer to Documentation
