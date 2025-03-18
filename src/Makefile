@@ -14,7 +14,7 @@ clearRedisBackup:
 	> src/backup.txt
 
 startClient:
-	python src/Client.py
+	python Client.py
 
 startRedisServer:
 	python RedisServer.py
