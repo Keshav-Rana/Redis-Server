@@ -8,4 +8,4 @@ stopRedisContainer:
 	docker stop redis-stack-server
 
 benchmarkGETSET:
-	redis-benchmark -t SET,GET -q
+	redis-benchmark -t SET,GET -q -n 100000

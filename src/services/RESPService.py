@@ -97,6 +97,5 @@ class RESPService:
             response[0] = response[0].replace(":", "")
             return f"(integer) {response[0]}"
         
-        
         elif cmd == "LRANGE":
             pass

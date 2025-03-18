@@ -1,37 +1,39 @@
+# asynchronous version
+import asyncio
 from services.RESPService import RESPService
-# from RedisServer import RedisServer
-import socket
 
-HOST = "localhost"
-PORT = 6380
+async def send_message():
+    HOST = "localhost"
+    PORT = 6379
 
-# create client socket for sending data
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # Open connection asynchronously and assign StreamReader and StreamWriter objs
+    reader, writer = await asyncio.open_connection(HOST, PORT)
+    print("Connected to Redis Server")
 
-# connect to server
-client_socket.connect((HOST, PORT))
-print("Connected to Redis Server")
+    try:
+        while True:
+            # Get input from user
+            message = input()
+            # Send message to the server
+            message = RESPService.serialiser(message)
+            # sends the message but does not wait for tranmission to complete
+            writer.write(message.encode())
+            await writer.drain()  # Ensure the data is sent i.e. the write buffer is completely flushed
 
-try:
-    while True:
-        # get input from user
-        message = input()
+            # Receive a response from the server
+            response = await reader.read(1024)
+            print(f"{response.decode()}")
 
-        # send message to server
-        message = RESPService.serialiser(message)
-        # print(message)
+    except KeyboardInterrupt:
+        print("Shutting down the client...")
 
-        client_socket.sendall(message.encode())
+    except ConnectionError as e:
+        print(f"Connection Error: {e}")
 
-        # receive a response from the server
-        response = client_socket.recv(1024)
-        print(f"{response.decode()}")
+    finally:
+        writer.close() # initiates the closing process
+        await writer.wait_closed() # waits for connection to be completely closed, preventing unexpected behavior
 
-except KeyboardInterrupt:
-    print("Shutting down the server...")
+# Run the async function
+asyncio.run(send_message()) # sets up event loop, runs the specified coroutine and then cleans up loop
 
-except ConnectionError as e:
-    print(f"Connection Error: {e}")
-
-finally:
-    client_socket.close()
