@@ -9,3 +9,6 @@ stopRedisContainer:
 
 benchmarkGETSET:
 	redis-benchmark -t SET,GET -q -n 100000
+
+clearRedisBackup:
+	> src/backup.txt

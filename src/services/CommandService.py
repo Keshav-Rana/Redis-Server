@@ -228,13 +228,15 @@ class CommandService:
             self.db.set(key, curr_list)
 
             return f":{len(curr_list)}\r\n"
-        
-        # only supports positive indexes
-        elif self.operation == "LRANGE":
-            pass
 
+        # AOF mechanism
         elif self.operation == "SAVE":
             pass
         
         else:
-            return "+Error\r\n"
+            response = f"-ERR unknown command {self.message[2]}, with args beginning with: "
+            for i in range(4, len(self.message), 2):
+                response += f"'{self.message[i]}' "
+
+            response += "\r\n"
+            return response

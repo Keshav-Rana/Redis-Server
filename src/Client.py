@@ -1,10 +1,14 @@
 # asynchronous version
 import asyncio
 from services.RESPService import RESPService
+from services.AOFService import AOFService
 
 async def send_message():
     HOST = "localhost"
     PORT = 6379
+
+    # create instance of AOF Service
+    file_writer = AOFService()
 
     # Open connection asynchronously and assign StreamReader and StreamWriter objs
     reader, writer = await asyncio.open_connection(HOST, PORT)
@@ -14,6 +18,8 @@ async def send_message():
         while True:
             # Get input from user
             message = input()
+            # append message to file
+            await file_writer.append_to_file(message)
             # Send message to the server
             message = RESPService.serialiser(message)
             # sends the message but does not wait for tranmission to complete

@@ -96,6 +96,12 @@ class RESPService:
             # strip : from response
             response[0] = response[0].replace(":", "")
             return f"(integer) {response[0]}"
-        
-        elif cmd == "LRANGE":
-            pass
+
+        # handle error 
+        else:
+            response = redis_response.split('\r\n')
+
+            # handle error
+            if response[0].startswith("-"):
+                content = response[0].replace("-", "")
+                return f"(error) {content}"
