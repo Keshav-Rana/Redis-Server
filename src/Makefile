@@ -12,3 +12,9 @@ benchmarkGETSET:
 
 clearRedisBackup:
 	> src/backup.txt
+
+startClient:
+	python src/Client.py
+
+startRedisServer:
+	python RedisServer.py
